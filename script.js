@@ -3,6 +3,24 @@ const buttons = document.querySelectorAll("button");
 const bottomDisplay = document.querySelector("#bottom-calc");
 const topDisplay = document.querySelector("#top-calc");
 
+document.addEventListener("keydown", handleKeyboardInput);
+
+function handleKeyboardInput(e) {
+  const value = e.key;
+
+  if (digits.includes(value) || value === ".") {
+    appendToDisplay(value);
+  } else if (operators.includes(value)) {
+    appendToDisplay(value);
+  } else if (value === "Enter" || value === "=") {
+    equal();
+  } else if (value === "Escape") {
+    clearAll();
+  } else if (value === "Backspace") {
+    deleteButton();
+  }
+}
+
 const operators = ["/", "*", "+", "-"];
 const digits = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
 
@@ -12,8 +30,6 @@ let answer = [];
 
 function appendToDisplay(value) {
   formatStack(value);
-
-  //console.log(stack);
 
   updateDisplay();
 }
