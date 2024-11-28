@@ -3,7 +3,7 @@ const buttons = document.querySelectorAll("button");
 const bottomDisplay = document.querySelector("#bottom-calc");
 const topDisplay = document.querySelector("#top-calc");
 
-const operators = ["÷", "x", "+", "-"];
+const operators = ["/", "*", "+", "-"];
 const digits = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
 
 let pointer = 0;
@@ -13,14 +13,14 @@ let answer = [];
 function appendToDisplay(value) {
   formatStack(value);
 
+  //bunu silmeyi unutma
+
   console.log("eqStack: ", stack);
 
   updateDisplay();
 }
 
 function calculate() {
-  //eqStack.flat(); // Çıktı: ["5", "+", "3"]
-  //eqStack.flat().join(""); // Çıktı: "5+3"
   let flatStack = stack.map((e) => e.join(""));
 
   answer = operate(
@@ -28,6 +28,8 @@ function calculate() {
     parseFloat(flatStack[0]),
     parseFloat(flatStack[2])
   );
+
+  // eger answer stringse yaziyi yayinla
   answer = Math.round(answer * 100) / 100;
   topDisplay.textContent = flatStack.join("");
   bottomDisplay.textContent = answer;
@@ -52,6 +54,8 @@ function formatStack(value) {
       if (stack[0].length == 1 && operators.includes(value) && value != "-") {
         stack[0].pop();
       }
+
+      //eger - varsa ve numara giriliyorsa ikisini de stack 0'a ekle
 
       if (stack[0].length > 0 && operators.includes(value) && value != ".") {
         pointer = 1;
@@ -97,15 +101,15 @@ function formatStack(value) {
 }
 
 function equal() {
+  // islem baslamadan önce kontrol et her sey yerli yerinde mi diye, oyleyse tus calisacak
   answer = calculate();
 
   topDisplay.textContent = stack.flat().join("");
   bottomDisplay.textContent = answer;
 
   //Daha sonra eqStack sıfırlanır ve sonuç, yeni işlemlerde kullanılabilmesi için eqStack[0] pozisyonuna eklenir.
-  stack[0] = answer.toString();
-  stack[1] = [];
-  stack[2] = [];
+  stack = [[], [], []];
+  stack[0].push(answer.toString());
   pointer = 0;
 }
 
