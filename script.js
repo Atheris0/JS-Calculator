@@ -13,9 +13,7 @@ let answer = [];
 function appendToDisplay(value) {
   formatStack(value);
 
-  //bunu silmeyi unutma
-
-  console.log("eqStack: ", stack);
+  //console.log(stack);
 
   updateDisplay();
 }
@@ -29,23 +27,24 @@ function calculate() {
     parseFloat(flatStack[2])
   );
 
-  // eger answer stringse yaziyi yayinla
-  answer = Math.round(answer * 100) / 100;
+  if (answer === "Error") {
+    bottomDisplay.textContent = "I'm sorry Dave";
+  } else {
+    answer = Math.round(answer * 100) / 100;
+    bottomDisplay.textContent = answer;
+  }
   topDisplay.textContent = flatStack.join("");
-  bottomDisplay.textContent = answer;
 
   return answer;
 }
 
 function formatStack(value) {
-  //stack[pointer].push(value);
-  //Kullanıcının bastığı tuş şu anki eqPointer'ın işaret ettiği bölüme eklenir.
-
   switch (pointer) {
     case 0:
       stack[0].push(value);
-      //console.log("case0");
-      //Eğer bir önceki işlem sonucu varsa (answer.length != 0) ve kullanıcı yeni bir sayı tuşlarsa
+
+      //negatif logic eklenecek
+
       if (answer.length != 0 && digits.includes(value)) {
         answer = [];
         stack[0] = [value];
@@ -54,8 +53,6 @@ function formatStack(value) {
       if (stack[0].length == 1 && operators.includes(value) && value != "-") {
         stack[0].pop();
       }
-
-      //eger - varsa ve numara giriliyorsa ikisini de stack 0'a ekle
 
       if (stack[0].length > 0 && operators.includes(value) && value != ".") {
         pointer = 1;
@@ -66,13 +63,10 @@ function formatStack(value) {
       break;
 
     case 1:
-      //console.log(stack[1].length);
       if (stack[1].length > 0 && operators.includes(value)) {
-        //console.log("case1");
         stack[1].length = 0;
         stack[1].push(value);
       } else if (digits.includes(value)) {
-        // Operatörden sonra sayı girilirse ikinci pozisyona geçiş yapılır
         pointer = 2;
         stack[2].push(value);
       }
@@ -80,12 +74,6 @@ function formatStack(value) {
       break;
 
     case 2:
-      //console.log("case2");
-      /* bu oldugunda hesaplama baslamali kodu degistir
-      if (stack[2].length == 1 && operators.includes(value)) {
-        stack[2].pop();
-      }
-        */
       stack[2].push(value);
 
       if (stack[2].length > 0 && operators.includes(value)) {
@@ -101,19 +89,25 @@ function formatStack(value) {
 }
 
 function equal() {
-  // islem baslamadan önce kontrol et her sey yerli yerinde mi diye, oyleyse tus calisacak
+  if (stack.map((part) => part.join("")).some((part) => part === "")) {
+    return;
+  }
   answer = calculate();
 
   topDisplay.textContent = stack.flat().join("");
-  bottomDisplay.textContent = answer;
 
-  //Daha sonra eqStack sıfırlanır ve sonuç, yeni işlemlerde kullanılabilmesi için eqStack[0] pozisyonuna eklenir.
+  if (answer === "Error") {
+    bottomDisplay.textContent = "I'm sorry Dave";
+  } else {
+    answer = Math.round(answer * 100) / 100;
+    bottomDisplay.textContent = answer;
+  }
+
   stack = [[], [], []];
   stack[0].push(answer.toString());
   pointer = 0;
 }
 
-//belki sonra default ekle
 function operate(currentOperator, firstNumber, secondNumber) {
   switch (currentOperator) {
     case "+":
@@ -123,9 +117,7 @@ function operate(currentOperator, firstNumber, secondNumber) {
     case "*":
       return multiply(firstNumber, secondNumber);
     case "/":
-      return secondNumber === 0
-        ? "I'm sorry Dave"
-        : divide(firstNumber, secondNumber);
+      return secondNumber === 0 ? "Error" : divide(firstNumber, secondNumber);
   }
 }
 
@@ -133,7 +125,6 @@ function updateDisplay() {
   const topCalcContent = stack.flat().join("");
   const bottomCalcContent = stack[pointer].join("") || "0";
 
-  //update top and bottom displays
   topDisplay.textContent = topCalcContent || "";
   bottomDisplay.textContent = bottomCalcContent;
 }
@@ -155,7 +146,6 @@ buttons.forEach((button) => {
 
   button.addEventListener("click", () => {
     if (button.classList.contains("operator")) {
-      //console.log(value);   //SIL
       if (value === "=") {
         equal();
       } else if (value === "C") {
@@ -164,11 +154,9 @@ buttons.forEach((button) => {
         deleteButton();
       } else {
         appendToDisplay(value);
-        //console.log(value);
       }
     } else {
       appendToDisplay(value);
-      //console.log(value);   //SIL
     }
   });
 });
