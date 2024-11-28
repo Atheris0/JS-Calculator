@@ -85,3 +85,12 @@ body {
 .equal:hover {
   background-color: #e8a8a4;
 }
+
+.delete {
+  background-color: #f2c6de;
+  grid-column: span 2;
+}
+
+.delete:hover {
+  background-color: #e47b74;
+}
