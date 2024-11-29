@@ -57,20 +57,21 @@ function calculate() {
 function formatStack(value) {
   switch (pointer) {
     case 0:
+      if (stack[0].length == 1 && stack[0][0] == value && value == "-") {
+        return;
+      }
       stack[0].push(value);
-
-      //negatif logic eklenecek
 
       if (answer.length != 0 && digits.includes(value)) {
         answer = [];
         stack[0] = [value];
       }
 
-      if (stack[0].length == 1 && operators.includes(value) && value != "-") {
-        stack[0].pop();
-      }
-
-      if (stack[0].length > 0 && operators.includes(value) && value != ".") {
+      if (
+        (stack[0].length == 1 &&
+          (value == "+" || value == "*" || value == "/")) ||
+        (stack[0].length > 1 && operators.includes(value) && value != ".")
+      ) {
         pointer = 1;
 
         let operator = stack[0].pop();
@@ -79,17 +80,29 @@ function formatStack(value) {
       break;
 
     case 1:
-      if (stack[1].length > 0 && operators.includes(value)) {
+      if (stack[1].length == 1 && stack[1][0] == value && value == "-") {
+        return;
+      }
+      if (
+        stack[1].length > 0 &&
+        (value == "+" || value == "*" || value == "/")
+      ) {
         stack[1].length = 0;
         stack[1].push(value);
-      } else if (digits.includes(value)) {
+      } else if (digits.includes(value) || value == "-") {
         pointer = 2;
         stack[2].push(value);
       }
-
       break;
 
     case 2:
+      if (
+        stack[2].length == 1 &&
+        stack[2][0] == "-" &&
+        operators.includes(value)
+      ) {
+        return;
+      }
       stack[2].push(value);
 
       if (stack[2].length > 0 && operators.includes(value)) {
@@ -105,6 +118,9 @@ function formatStack(value) {
 }
 
 function equal() {
+  if (stack[2].length == 1 && stack[2][0] == "-") {
+    return;
+  }
   if (stack.map((part) => part.join("")).some((part) => part === "")) {
     return;
   }
