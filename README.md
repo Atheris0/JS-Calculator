@@ -18,7 +18,6 @@ This is a simple calculator with both keyboard and mouse support, created for Th
   - Enhance the design for a more polished look.
 - Functionality:
   - Add support for advanced operations like percentages, square roots, or exponents.
-  - Allow negative numbers in calculations.
 
 ## Live Preview
 
